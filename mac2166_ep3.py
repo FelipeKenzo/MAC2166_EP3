@@ -2,13 +2,14 @@ def main():
     opcao = int(input("Opcao de jogo: "))
     n = int(input("Tamanho do tabuleiro: "))
 
-    #Roda a opção 0 <= n <= 2.
-    if (opcao == 0):
-        opcao0(n)
-    elif (opcao == 1):
-        opcao1(n)
-    elif (opcao == 2):
-        opcao2(n)
+    if (n >= 2):
+        #Roda a opção 0 <= opcao <= 2.
+        if (opcao == 0):
+            opcao0(n)
+        elif (opcao == 1):
+            opcao1(n)
+        elif (opcao == 2):
+            opcao2(n)
 
 def opcao0(n):
     """Opção 0."""
@@ -23,14 +24,7 @@ def opcao0(n):
     tabFinal = montarTabuleiro(n)
     #imprimir(tabFinal)
 
-    #compara os tabuleiros valor a valor.
-    iguais = True
-    for i in range(n):
-        for j in range(n):
-            if (tabInicial[i][j] != tabFinal[i][j]):
-                iguais = False
-
-    if (iguais):
+    if (saoIguais(tabInicial, tabFinal)):
         print("SIM")
     else:
         print("NAO")
@@ -51,13 +45,8 @@ def opcao1(n):
     
     #print("zero: [",zero[0],"][",zero[1],"]")
 
-    m = int(input("Insira o numero de movimentos: "))
-
-    #inicialização da lista de movimentos
-    movimentos = [None for i in range (m)]
-
-    #entrada de dados pelo usuário. Cuidado: se não há o número exato de caracteres, dá pau.
-    movimentos = input("Movimentos: ").split()
+    #entrada de dados de movimento pelo usuário.
+    movimentos = input("Movimentos: ")
 
     # Apenas para debug. Deve ser retirado.
     #print("")
@@ -65,14 +54,43 @@ def opcao1(n):
     #    print(movimentos[i], end = " ")
     #print("")
 
-    for i in range(m):
-        mover(movimentos[i], tabuleiro, zero, n)
+    i = 1
+    for m in movimentos:
+        #print(m)
+        if (not mover(m, tabuleiro, zero)):
+            print("NAO: ", i)
+            break
+        print("")
+        #imprimir(tabuleiro)
+        i = i + 1
     
+    print("Tabuleiro final:", end = " ")
     imprimir(tabuleiro)
 
-
 def opcao2(n):
-    """Opcao 2"""
+    """Opção 2"""
+
+    pmax = int(input("Insira a profundidade maxima: "))
+
+    print("Tabuleiro inicial:", end = " ")
+    tabInicial = montarTabuleiro(n)
+
+    print("Tabuleiro final:", end = " ")
+    tabFinal = montarTabuleiro(n)
+
+    p = 0
+    listaMov = []
+
+    #localiza a posição do 0 no tabuleiro. Assume que só há um 0.
+    for i in range(n):
+        for j in range(n):
+            if (tabInicial[i][j] == 0):
+                zero = [i, j] #salva as coordenadas do zero.
+
+    if ladrilho(pmax, tabInicial, tabFinal, p, zero, 'e', listaMov):
+        print("SIM")
+    else:
+        print("NAO")
 
 def montarTabuleiro(n):
     """Monta um tabuleiro."""
@@ -91,7 +109,16 @@ def montarTabuleiro(n):
     
     return tabuleiro
 
-def mover(movimento, tabuleiro, posicao, n):
+def saoIguais(tabuleiroA, tabuleiroB):
+    iguais = True
+    for i in range(len(tabuleiroA)):
+        for j in range(len(tabuleiroA[i])):
+            if (tabuleiroA[i][j] != tabuleiroB[i][j]):
+                iguais = False
+    
+    return iguais
+
+def mover(movimento, tabuleiro, posicao):
     """Move um elemento qualquer de um tabuleiro"""
     # Argumentos são passados por referência :D
     
@@ -104,11 +131,11 @@ def mover(movimento, tabuleiro, posicao, n):
     # Apenas para facilitar a leitura
     i = posicao[0] # linha
     j = posicao[1] # coluna
+    n = len(tabuleiro)
 
     if (movimento ==  'c'):
         if (i <= 0): #limite superior
-            print("NAO")
-            return
+            return False
         aux = tabuleiro[i-1][j]             # copia elemento acima.
         tabuleiro[i-1][j] = tabuleiro[i][j] # sobrescreve o elemento acima.
         tabuleiro[i][j] = aux               # reinsere o elemento.
@@ -116,8 +143,7 @@ def mover(movimento, tabuleiro, posicao, n):
 
     elif (movimento ==  'b'):
         if (i >= n - 1): # limite inferior
-            print("NAO")
-            return
+            return False
         aux = tabuleiro[i+1][j]             # copia elemento abaixo.
         tabuleiro[i+1][j] = tabuleiro[i][j] # sobrescreve o elemento abaixo.
         tabuleiro[i][j] = aux               # reinsere o elemento.
@@ -125,8 +151,7 @@ def mover(movimento, tabuleiro, posicao, n):
 
     elif (movimento ==  'd'):
         if (j >= n - 1): #limite à direita
-            print("NAO")
-            return
+            return False
         aux = tabuleiro[i][j+1]             # copia elemento à direita.
         tabuleiro[i][j+1] = tabuleiro[i][j] # sobrescreve o elemento à direita.
         tabuleiro[i][j] = aux               # reinsere o elemento.
@@ -134,31 +159,51 @@ def mover(movimento, tabuleiro, posicao, n):
 
     elif (movimento ==  'e'):
         if (j <= 0): #limite superior
-            print("NAO")
-            return
+            return False
         aux = tabuleiro[i][j-1]             # copia elemento à esquerda.
         tabuleiro[i][j-1] = tabuleiro[i][j] # sobrescreve o elemento à esquerda.
         tabuleiro[i][j] = aux                 # reinsere o elemento.
         posicao[1] = posicao[1] - 1
     
+    return True
     #imprimir(tabuleiro)
 
 def imprimir(tabuleiro):
     """Imprime o tabuleiro na tela."""
-    print("")
+
     for i in range(len(tabuleiro)):
         for j in range(len(tabuleiro[i])):
             print(tabuleiro[i][j], end=" ")
         print("")
     print("")
 
-def ladrilho(pmax):
+def ladrilho(pmax, Mat, Matfim, p, pos, mov, ListaMov):
     """Funcao recursiva que verifica se existe uma sequência de pmax
        movimentos da configuracao atual atá final """
+    
+    if (p == pmax):
+        return False
 
-    existe = False
+    if (saoIguais(Mat, Matfim)):
+        return True
 
-    return existe
+    print(p)
+
+    if (mov == 'c'):
+        proxMov = 'd'
+    elif (mov == 'd'):
+        proxMov = 'b'
+    elif (mov == 'b'):
+        proxMov = 'e'
+    elif (mov == 'e'):
+        proxMov = 'c'
+
+    if (mover(proxMov, Mat, pos)):
+        ListaMov.append(proxMov)
+        return ladrilho(pmax, Mat, Matfim, p + 1, pos, proxMov, ListaMov)
+    else:
+        return False
+
 
 #executa o programa em si
 main()
