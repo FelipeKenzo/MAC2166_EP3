@@ -10,9 +10,13 @@ def main():
             opcao1(n)
         elif (opcao == 2):
             opcao2(n)
+        #Opção adicionada para entender o algoritmo recursivo
+        elif (opcao == 3):
+            opcao3(n)
+
 
 def opcao0(n):
-    """Opção 0."""
+    """Opção 0 (comparação de matrizes)."""
     
     #cria o tabuleiro inicial.
     print("Tabuleiro inicial:", end = " ")
@@ -30,7 +34,7 @@ def opcao0(n):
         print("NAO")
 
 def opcao1(n):
-    """Opção 1."""
+    """Opção 1 (movimentação)."""
 
     #cria o tabuleiro inicial.
     print("Tabuleiro inicial:", end = " ")
@@ -68,7 +72,7 @@ def opcao1(n):
     imprimir(tabuleiro)
 
 def opcao2(n):
-    """Opção 2"""
+    """Opção 2 (busca em profundidade)"""
 
     pmax = int(input("Insira a profundidade maxima: "))
 
@@ -87,11 +91,39 @@ def opcao2(n):
             if (tabInicial[i][j] == 0):
                 zero = [i, j] #salva as coordenadas do zero.
 
-    if ladrilho(pmax, tabInicial, tabFinal, p, zero, 'e', listaMov):
-        print("SIM")
-    else:
-        print("NAO")
+    if ladrilho(pmax, tabInicial, tabFinal, p, zero, 'c', listaMov):
+        print("Sucesso!\nMovimentos:", end = " ")
+        
+        for m in listaMov:
+            print (m, end=" ")
 
+        print("")
+        imprimir(tabInicial)
+    else:
+        print("Nao encontrei solucao")
+
+def opcao3(n):
+    """Opção de auxílio para entender o ladrilho(..)"""
+
+    tabuleiro = montarTabuleiro(n)
+
+    #localiza a posição do 0 no tabuleiro. Assume que só há um 0.
+    for i in range(n):
+        for j in range(n):
+            if (tabuleiro[i][j] == 0):
+                zero = [i, j] #salva as coordenadas do zero.
+
+    while True:
+        movimentos = input("Movimento: ")
+
+        if (movimentos == 'q'):
+            break
+
+        for m in movimentos:
+            mover(m, tabuleiro, zero)
+            print("")
+            imprimir(tabuleiro)
+    
 def montarTabuleiro(n):
     """Monta um tabuleiro."""
     
@@ -178,31 +210,91 @@ def imprimir(tabuleiro):
     print("")
 
 def ladrilho(pmax, Mat, Matfim, p, pos, mov, ListaMov):
-    """Funcao recursiva que verifica se existe uma sequência de pmax
-       movimentos da configuracao atual atá final """
+    """Função recursiva que verifica se existe uma sequência de pmax
+       movimentos da configuração atual até a final."""
     
-    if (p == pmax):
-        return False
-
     if (saoIguais(Mat, Matfim)):
         return True
 
-    print(p)
-
-    if (mov == 'c'):
-        proxMov = 'd'
-    elif (mov == 'd'):
-        proxMov = 'b'
-    elif (mov == 'b'):
-        proxMov = 'e'
-    elif (mov == 'e'):
-        proxMov = 'c'
-
-    if (mover(proxMov, Mat, pos)):
-        ListaMov.append(proxMov)
-        return ladrilho(pmax, Mat, Matfim, p + 1, pos, proxMov, ListaMov)
-    else:
+    if (p == pmax):
         return False
+    
+    if (mov != 'b'):
+        proxMov = 'c'
+    else:
+        proxMov = 'd'
+
+    tentativas = 1
+    #Na primeira chamada, não há movimento que desfaça o anterior.
+    if (p == 0):
+        while (tentativas <= 4):    
+            if (mover(proxMov, Mat, pos)):
+                ListaMov.append(proxMov)
+                if ladrilho(pmax, Mat, Matfim, p + 1, pos, proxMov, ListaMov):
+                    return True
+                else:
+                    proxMov = ListaMov.pop()
+                    if (proxMov == 'c'):
+                        mover('b', Mat, pos)
+                    elif (proxMov == 'd'):
+                        mover('e', Mat, pos)
+                    elif (proxMov == 'b'):
+                        mover('c', Mat, pos)
+                    elif (proxMov == 'e'):
+                        mover('d', Mat, pos)
+            
+            if (proxMov == 'c'):
+                proxMov = 'd'
+            elif (proxMov == 'd'):
+                proxMov = 'b'
+            elif (proxMov == 'b'):
+                proxMov = 'e'
+            elif (proxMov == 'e'):
+                proxMov = 'c'
+
+            tentativas += 1
+    else:
+        while (tentativas <= 3):    
+            if (mover(proxMov, Mat, pos)):
+                ListaMov.append(proxMov)
+                if ladrilho(pmax, Mat, Matfim, p + 1, pos, proxMov, ListaMov):
+                    return True
+                else:
+                    proxMov = ListaMov.pop()
+
+                    if (proxMov == 'c'):
+                        mover('b', Mat, pos)
+                    elif (proxMov == 'd'):
+                        mover('e', Mat, pos)
+                    elif (proxMov == 'b'):
+                        mover('c', Mat, pos)
+                    elif (proxMov == 'e'):
+                        mover('d', Mat, pos)
+            
+            if (proxMov == 'c' and mov != 'e'):
+                proxMov = 'd'
+            elif (proxMov == 'd' and mov != 'c'):
+                proxMov = 'b'
+            elif (proxMov == 'b' and mov != 'd'):
+                proxMov = 'e'
+            elif (proxMov == 'e' and mov != 'b'):
+                proxMov = 'c'
+            
+            tentativas += 1
+
+    return False
+            
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
 #executa o programa em si
