@@ -1,3 +1,26 @@
+"""
+  AO PREENCHER ESSE CABEÇALHO COM O MEU NOME E O MEU NÚMERO USP, 
+  DECLARO QUE SOU O ÚNICO AUTOR E RESPONSÁVEL POR ESSE PROGRAMA. 
+  TODAS AS PARTES ORIGINAIS DESSE EXERCÍCIO PROGRAMA (EP) FORAM 
+  DESENVOLVIDAS E IMPLEMENTADAS POR MIM SEGUINDO AS INSTRUÇÕES
+  DESSE EP E QUE PORTANTO NÃO CONSTITUEM DESONESTIDADE ACADÊMICA
+  OU PLÁGIO.  
+  DECLARO TAMBÉM QUE SOU RESPONSÁVEL POR TODAS AS CÓPIAS
+  DESSE PROGRAMA E QUE EU NÃO DISTRIBUI OU FACILITEI A
+  SUA DISTRIBUIÇÃO. ESTOU CIENTE QUE OS CASOS DE PLÁGIO E
+  DESONESTIDADE ACADÊMICA SERÃO TRATADOS SEGUNDO OS CRITÉRIOS
+  DIVULGADOS NA PÁGINA DA DISCIPLINA.
+  ENTENDO QUE EPS SEM ASSINATURA NÃO SERÃO CORRIGIDOS E,
+  AINDA ASSIM, PODERÃO SER PUNIDOS POR DESONESTIDADE ACADÊMICA.
+
+  Nome :HENRIQUE MIRANDA CATALAN
+  NUSP :11382727
+  Turma:05
+  Prof.:ABNER 
+
+  Referências:Aulas do curso MAC2166
+"""
+
 def main():
     opcao = int(input("Opcao de jogo: "))
     n = int(input("Tamanho do tabuleiro: "))
@@ -10,7 +33,7 @@ def main():
             opcao1(n)
         elif (opcao == 2):
             opcao2(n)
-        #Opção adicionada para entender o algoritmo recursivo
+        #Opção adicionada para brincar.
         elif (opcao == 3):
             opcao3(n)
 
@@ -21,12 +44,10 @@ def opcao0(n):
     #cria o tabuleiro inicial.
     print("Tabuleiro inicial:", end = " ")
     tabInicial = montarTabuleiro(n)
-    #imprimir(tabInicial)
 
     #cria o tabuleiro final.
     print("Tabuleiro final:", end = " ")
     tabFinal = montarTabuleiro(n)
-    #imprimir(tabFinal)
 
     if (saoIguais(tabInicial, tabFinal)):
         print("SIM")
@@ -39,7 +60,6 @@ def opcao1(n):
     #cria o tabuleiro inicial.
     print("Tabuleiro inicial:", end = " ")
     tabuleiro = montarTabuleiro(n)
-    #imprimir(tab)
     
     #localiza a posição do 0 no tabuleiro. Assume que só há um 0.
     for i in range(n):
@@ -47,26 +67,16 @@ def opcao1(n):
             if (tabuleiro[i][j] == 0):
                 zero = [i, j] #salva as coordenadas do zero.
     
-    #print("zero: [",zero[0],"][",zero[1],"]")
-
     #entrada de dados de movimento pelo usuário.
     movimentos = input("Digite seq mov: ")
-
-    # Apenas para debug. Deve ser retirado.
-    #print("")
-    #for i in range(m):
-    #    print(movimentos[i], end = " ")
-    #print("")
 
     i = 1
     conseguiu = True
     for m in movimentos:
-        #print(m)
         if (not mover(m, tabuleiro, zero)):
             conseguiu = False
             print("NAO: ",i)
             break
-        #imprimir(tabuleiro)
         i = i + 1
     
     if (conseguiu):
@@ -107,24 +117,38 @@ def opcao2(n):
 def opcao3(n):
     """Opção de auxílio para entender o ladrilho(..)"""
 
-    tabuleiro = montarTabuleiro(n)
+    print("Tabuleiro inicial:")
+    tabInicial = montarTabuleiro(n)
+
+    print("Tabuleiro final:")
+    tabFinal = montarTabuleiro(n)
 
     #localiza a posição do 0 no tabuleiro. Assume que só há um 0.
     for i in range(n):
         for j in range(n):
-            if (tabuleiro[i][j] == 0):
+            if (tabInicial[i][j] == 0):
                 zero = [i, j] #salva as coordenadas do zero.
 
+    ganhou = False
+    
     while True:
-        movimentos = input("Movimento: ")
+        movimentos = input("Movimento(s): ")
 
         if (movimentos == 'q'):
             break
 
         for m in movimentos:
-            mover(m, tabuleiro, zero)
+            mover(m, tabInicial, zero)
             print("")
-            imprimir(tabuleiro)
+            imprimir(tabInicial)
+            if (saoIguais(tabInicial, tabFinal)):
+                print("Parabéns!")
+                ganhou = True
+                break
+        
+        if (ganhou):
+            break
+
     
 def montarTabuleiro(n):
     """Monta um tabuleiro."""
@@ -138,9 +162,6 @@ def montarTabuleiro(n):
         for j in range(n):
             tabuleiro[i][j] = int(linha.split()[j])
 
-    # Apenas para fins de debug. Deve ser retirado.
-    # imrimir(tabuleiro)
-    
     return tabuleiro
 
 def saoIguais(tabuleiroA, tabuleiroB):
@@ -215,8 +236,7 @@ def imprimir(tabuleiro):
 
 def ladrilho(pmax, Mat, Matfim, p, pos, mov, ListaMov):
     """Função recursiva que verifica se existe uma sequência de pmax
-       movimentos da configuração atual até a final (mínima).
-       É, em essência, um algoritmo de busca em largura."""
+       movimentos da configuração atual até a final (mínima)."""
 
     #Cada chamada da função percorre um nível da recursão.
     #print(p)
