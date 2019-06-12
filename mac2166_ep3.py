@@ -50,7 +50,7 @@ def opcao1(n):
     #print("zero: [",zero[0],"][",zero[1],"]")
 
     #entrada de dados de movimento pelo usuário.
-    movimentos = input("Movimentos: ")
+    movimentos = input("Digite seq mov: ")
 
     # Apenas para debug. Deve ser retirado.
     #print("")
@@ -74,7 +74,7 @@ def opcao1(n):
 def opcao2(n):
     """Opção 2 (busca em profundidade)"""
 
-    pmax = int(input("Insira a profundidade maxima: "))
+    pmax = int(input("Profundidade maxima: "))
 
     print("Tabuleiro inicial:", end = " ")
     tabInicial = montarTabuleiro(n)
@@ -91,7 +91,7 @@ def opcao2(n):
             if (tabInicial[i][j] == 0):
                 zero = [i, j] #salva as coordenadas do zero.
 
-    if ladrilho(pmax, tabInicial, tabFinal, p, zero, 'c', listaMov):
+    if ladrilho(pmax, tabInicial, tabFinal, p, zero, '', listaMov):
         print("Sucesso!\nMovimentos:", end = " ")
         
         for m in listaMov:
@@ -205,97 +205,87 @@ def imprimir(tabuleiro):
 
     for i in range(len(tabuleiro)):
         for j in range(len(tabuleiro[i])):
+            if (tabuleiro[i][j] <= 9):
+                print(end = " ")
             print(tabuleiro[i][j], end=" ")
         print("")
     print("")
 
 def ladrilho(pmax, Mat, Matfim, p, pos, mov, ListaMov):
     """Função recursiva que verifica se existe uma sequência de pmax
-       movimentos da configuração atual até a final."""
+       movimentos da configuração atual até a final (mínima).
+       É, em essência, um algoritmo de busca em largura."""
+
+    #Cada chamada da função percorre um nível da recursão.
+    print(p)
     
+    if (p == pmax):
+        return False
+
     if (saoIguais(Mat, Matfim)):
         return True
 
-    if (p == pmax):
-        return False
-    
-    if (mov != 'b'):
-        proxMov = 'c'
-    else:
-        proxMov = 'd'
-
-    tentativas = 1
     #Na primeira chamada, não há movimento que desfaça o anterior.
-    if (p == 0):
-        while (tentativas <= 4):    
-            if (mover(proxMov, Mat, pos)):
-                ListaMov.append(proxMov)
-                if ladrilho(pmax, Mat, Matfim, p + 1, pos, proxMov, ListaMov):
+    #Só posso chamar a função após percorrer a profundidade inteira.
+
+    while (p < pmax):
+        if ((mov != 'b') and mover('c', Mat, pos)):
+            ListaMov.append('c')
+            print(ListaMov)
+            if (p >= len(ListaMov)): # se não é a primeira vez testando nessa profundidade
+                if (ladrilho(pmax, Mat, Matfim, p, pos, 'c', ListaMov)):
                     return True
-                else:
-                    proxMov = ListaMov.pop()
-                    if (proxMov == 'c'):
-                        mover('b', Mat, pos)
-                    elif (proxMov == 'd'):
-                        mover('e', Mat, pos)
-                    elif (proxMov == 'b'):
-                        mover('c', Mat, pos)
-                    elif (proxMov == 'e'):
-                        mover('d', Mat, pos)
-            
-            if (proxMov == 'c'):
-                proxMov = 'd'
-            elif (proxMov == 'd'):
-                proxMov = 'b'
-            elif (proxMov == 'b'):
-                proxMov = 'e'
-            elif (proxMov == 'e'):
-                proxMov = 'c'
+            elif (saoIguais(Mat, Matfim)):
+                return True
+            ListaMov.pop()
+            print(ListaMov)
+            mover('b', Mat, pos)
+            #if (len(ListaMov) > 0): # se não é o primeiro nível da recursão
+            #    return False
 
-            tentativas += 1
-    else:
-        while (tentativas <= 3):    
-            if (mover(proxMov, Mat, pos)):
-                ListaMov.append(proxMov)
-                if ladrilho(pmax, Mat, Matfim, p + 1, pos, proxMov, ListaMov):
+        if ((mov != 'e') and mover('d', Mat, pos)):
+            ListaMov.append('d')
+            print(ListaMov)
+            if (p >= len(ListaMov)): # se não é a primeira vez testando nessa profundidade
+                if (ladrilho(pmax, Mat, Matfim, p, pos, 'd', ListaMov)):
                     return True
-                else:
-                    proxMov = ListaMov.pop()
+            elif (saoIguais(Mat, Matfim)):
+                return True
+            ListaMov.pop()
+            print(ListaMov)
+            mover('e', Mat, pos)
+            #if (len(ListaMov) > 0): # se não é o primeiro nível da recursão
+            #    return False
+        
+        if ((mov != 'c') and mover('b', Mat, pos)):
+            ListaMov.append('b')
+            print(ListaMov)
+            if (p >= len(ListaMov)): # se não é a primeira vez testando nessa profundidade
+                if (ladrilho(pmax, Mat, Matfim, p, pos, 'b', ListaMov)):
+                    return True
+            elif (saoIguais(Mat, Matfim)):
+                return True
+            ListaMov.pop()
+            print(ListaMov)
+            mover('c', Mat, pos)
+            #if (len(ListaMov) > 0 ): # se não é o primeiro nível da recursão
+            #    return False
 
-                    if (proxMov == 'c'):
-                        mover('b', Mat, pos)
-                    elif (proxMov == 'd'):
-                        mover('e', Mat, pos)
-                    elif (proxMov == 'b'):
-                        mover('c', Mat, pos)
-                    elif (proxMov == 'e'):
-                        mover('d', Mat, pos)
-            
-            if (proxMov == 'c' and mov != 'e'):
-                proxMov = 'd'
-            elif (proxMov == 'd' and mov != 'c'):
-                proxMov = 'b'
-            elif (proxMov == 'b' and mov != 'd'):
-                proxMov = 'e'
-            elif (proxMov == 'e' and mov != 'b'):
-                proxMov = 'c'
-            
-            tentativas += 1
-
+        if ((mov != 'd') and mover('e', Mat, pos)):
+            ListaMov.append('e')
+            print(ListaMov)
+            if (p >= len(ListaMov)): # se não é a primeira vez testando nessa profundidade
+                if (ladrilho(pmax, Mat, Matfim, p, pos, 'e', ListaMov)):
+                    return True
+            elif (saoIguais(Mat, Matfim)):
+                return True
+            ListaMov.pop()
+            print(ListaMov)
+            mover('d', Mat, pos)
+            if (len(ListaMov) > 0 ): # se não é o primeiro nível da recursão
+                return False
+        p += 1
+    
     return False
-            
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-#executa o programa em si
 main()
