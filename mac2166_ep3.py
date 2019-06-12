@@ -68,8 +68,8 @@ def opcao1(n):
         #imprimir(tabuleiro)
         i = i + 1
     
-    print("Tabuleiro final:", end = " ")
-    imprimir(tabuleiro)
+    #print("Tabuleiro final:", end = " ")
+    #imprimir(tabuleiro)
 
 def opcao2(n):
     """Opção 2 (busca em profundidade)"""
@@ -217,73 +217,73 @@ def ladrilho(pmax, Mat, Matfim, p, pos, mov, ListaMov):
        É, em essência, um algoritmo de busca em largura."""
 
     #Cada chamada da função percorre um nível da recursão.
-    print(p)
-    
-    if (p == pmax):
-        return False
+    #print(p)
 
     if (saoIguais(Mat, Matfim)):
         return True
 
     #Na primeira chamada, não há movimento que desfaça o anterior.
     #Só posso chamar a função após percorrer a profundidade inteira.
+    #A única instância que possui conhecimento sobre qual é a profundidade
+    # sendo varrida atualmente é a de profundidade 0.
 
-    while (p < pmax):
+    #Se a matriz não é igual logo quando chamada, temos que a profundidade é
+    # necessáriamente >= 1.
+    if (p == 0):
+        p = 1
+
+    while (p <= pmax):
         if ((mov != 'b') and mover('c', Mat, pos)):
             ListaMov.append('c')
-            print(ListaMov)
-            if (p >= len(ListaMov)): # se não é a primeira vez testando nessa profundidade
+            #print(ListaMov)
+            if (p > len(ListaMov)): # se não é a primeira vez testando nessa profundidade
                 if (ladrilho(pmax, Mat, Matfim, p, pos, 'c', ListaMov)):
                     return True
             elif (saoIguais(Mat, Matfim)):
                 return True
             ListaMov.pop()
-            print(ListaMov)
+            #print(ListaMov)
             mover('b', Mat, pos)
-            #if (len(ListaMov) > 0): # se não é o primeiro nível da recursão
-            #    return False
 
         if ((mov != 'e') and mover('d', Mat, pos)):
             ListaMov.append('d')
-            print(ListaMov)
-            if (p >= len(ListaMov)): # se não é a primeira vez testando nessa profundidade
+            #print(ListaMov)
+            if (p > len(ListaMov)): # se não é a primeira vez testando nessa profundidade
                 if (ladrilho(pmax, Mat, Matfim, p, pos, 'd', ListaMov)):
                     return True
             elif (saoIguais(Mat, Matfim)):
                 return True
             ListaMov.pop()
-            print(ListaMov)
+            #print(ListaMov)
             mover('e', Mat, pos)
-            #if (len(ListaMov) > 0): # se não é o primeiro nível da recursão
-            #    return False
-        
+
         if ((mov != 'c') and mover('b', Mat, pos)):
             ListaMov.append('b')
-            print(ListaMov)
-            if (p >= len(ListaMov)): # se não é a primeira vez testando nessa profundidade
+            #print(ListaMov)
+            if (p > len(ListaMov)): # se não é a primeira vez testando nessa profundidade
                 if (ladrilho(pmax, Mat, Matfim, p, pos, 'b', ListaMov)):
                     return True
             elif (saoIguais(Mat, Matfim)):
                 return True
             ListaMov.pop()
-            print(ListaMov)
+            #print(ListaMov)
             mover('c', Mat, pos)
-            #if (len(ListaMov) > 0 ): # se não é o primeiro nível da recursão
-            #    return False
 
         if ((mov != 'd') and mover('e', Mat, pos)):
             ListaMov.append('e')
-            print(ListaMov)
-            if (p >= len(ListaMov)): # se não é a primeira vez testando nessa profundidade
+            #print(ListaMov)
+            if (p > len(ListaMov)): # se não é a primeira vez testando nessa profundidade
                 if (ladrilho(pmax, Mat, Matfim, p, pos, 'e', ListaMov)):
                     return True
             elif (saoIguais(Mat, Matfim)):
                 return True
             ListaMov.pop()
-            print(ListaMov)
+            #print(ListaMov)
             mover('d', Mat, pos)
-            if (len(ListaMov) > 0 ): # se não é o primeiro nível da recursão
-                return False
+        
+        if (len(ListaMov) > 0 ): # se não é o primeiro nível da recursão, não percorro o laço.
+            #print('saiu')
+            return False
         p += 1
     
     return False
