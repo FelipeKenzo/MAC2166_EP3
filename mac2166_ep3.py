@@ -26,7 +26,7 @@ def main():
     n = int(input("Tamanho do tabuleiro: "))
 
     if (n >= 2):
-        #Roda a opção 0 <= opcao <= 2.
+        #Roda a opção 0 <= opcao <= 3.
         if (opcao == 0):
             opcao0(n)
         elif (opcao == 1):
@@ -175,7 +175,6 @@ def saoIguais(tabuleiroA, tabuleiroB):
 
 def mover(movimento, tabuleiro, posicao):
     """Move um elemento qualquer de um tabuleiro"""
-    # Argumentos são passados por referência :D
     
     # Lembrando que:
     #   0 1 2
@@ -217,11 +216,10 @@ def mover(movimento, tabuleiro, posicao):
             return False
         aux = tabuleiro[i][j-1]             # copia elemento à esquerda.
         tabuleiro[i][j-1] = tabuleiro[i][j] # sobrescreve o elemento à esquerda.
-        tabuleiro[i][j] = aux                 # reinsere o elemento.
+        tabuleiro[i][j] = aux               # reinsere o elemento.
         posicao[1] = posicao[1] - 1
     
     return True
-    #imprimir(tabuleiro)
 
 def imprimir(tabuleiro):
     """Imprime o tabuleiro na tela."""
@@ -239,7 +237,6 @@ def ladrilho(pmax, Mat, Matfim, p, pos, mov, ListaMov):
        movimentos da configuração atual até a final (mínima)."""
 
     #Cada chamada da função percorre um nível da recursão.
-    #print(p)
 
     if (saoIguais(Mat, Matfim)):
         return True
@@ -257,54 +254,45 @@ def ladrilho(pmax, Mat, Matfim, p, pos, mov, ListaMov):
     while (p <= pmax):
         if ((mov != 'b') and mover('c', Mat, pos)):
             ListaMov.append('c')
-            #print(ListaMov)
             if (p > len(ListaMov)): # se não é a primeira vez testando nessa profundidade
                 if (ladrilho(pmax, Mat, Matfim, p, pos, 'c', ListaMov)):
                     return True
             elif (saoIguais(Mat, Matfim)):
                 return True
             ListaMov.pop()
-            #print(ListaMov)
             mover('b', Mat, pos)
 
         if ((mov != 'e') and mover('d', Mat, pos)):
             ListaMov.append('d')
-            #print(ListaMov)
             if (p > len(ListaMov)): # se não é a primeira vez testando nessa profundidade
                 if (ladrilho(pmax, Mat, Matfim, p, pos, 'd', ListaMov)):
                     return True
             elif (saoIguais(Mat, Matfim)):
                 return True
             ListaMov.pop()
-            #print(ListaMov)
             mover('e', Mat, pos)
 
         if ((mov != 'c') and mover('b', Mat, pos)):
             ListaMov.append('b')
-            #print(ListaMov)
             if (p > len(ListaMov)): # se não é a primeira vez testando nessa profundidade
                 if (ladrilho(pmax, Mat, Matfim, p, pos, 'b', ListaMov)):
                     return True
             elif (saoIguais(Mat, Matfim)):
                 return True
             ListaMov.pop()
-            #print(ListaMov)
             mover('c', Mat, pos)
 
         if ((mov != 'd') and mover('e', Mat, pos)):
             ListaMov.append('e')
-            #print(ListaMov)
             if (p > len(ListaMov)): # se não é a primeira vez testando nessa profundidade
                 if (ladrilho(pmax, Mat, Matfim, p, pos, 'e', ListaMov)):
                     return True
             elif (saoIguais(Mat, Matfim)):
                 return True
             ListaMov.pop()
-            #print(ListaMov)
             mover('d', Mat, pos)
         
         if (len(ListaMov) > 0 ): # se não é o primeiro nível da recursão, não percorro o laço.
-            #print('saiu')
             return False
         p += 1
     
