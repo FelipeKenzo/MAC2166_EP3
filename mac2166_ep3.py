@@ -59,17 +59,19 @@ def opcao1(n):
     #print("")
 
     i = 1
+    conseguiu = True
     for m in movimentos:
         #print(m)
         if (not mover(m, tabuleiro, zero)):
-            print("NAO: ", i)
+            conseguiu = False
+            print("NAO: ",i)
             break
-        print("")
         #imprimir(tabuleiro)
         i = i + 1
     
-    #print("Tabuleiro final:", end = " ")
-    #imprimir(tabuleiro)
+    if (conseguiu):
+        print("Tabuleiro final:")
+        imprimir(tabuleiro)
 
 def opcao2(n):
     """Opção 2 (busca em profundidade)"""
